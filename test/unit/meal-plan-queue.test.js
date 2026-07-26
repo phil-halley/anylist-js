@@ -19,7 +19,7 @@ function createClient() {
 		mealPlanningCalendarResponse: {
 			calendarId: 'calendar-1',
 			events: [
-				{identifier: 'queue-1', date: null, recipeId: 'recipe-1', title: 'Soup'},
+				{identifier: 'queue-1', date: null, eventType: 1, recipeId: 'recipe-1', title: 'Soup'},
 				{identifier: 'dated-1', date: '2026-08-02', title: 'Tacos'},
 			],
 			labels: [],
@@ -42,14 +42,18 @@ describe('Meal Plan Queue', () => {
 		expect(queue[0].recipe.name).to.equal('Soup');
 	});
 
-	it('creates queue events with an omitted protobuf date', async () => {
+	it('creates queue events with the official event type and an omitted protobuf date', async () => {
 		const client = createClient();
 
 		const event = await client.createMealPlanQueueEvent({title: 'Soup'});
 		const encoded = event._encode();
+		const operation = event._createOperation('new-event');
 
 		expect(event.date).to.equal(null);
+		expect(event.eventType).to.equal(1);
 		expect(encoded.date).to.equal(null);
+		expect(encoded.eventType).to.equal(1);
+		expect(operation.eventType).to.equal(1);
 	});
 
 	it('parses date-only strings as local calendar dates', async () => {
@@ -89,10 +93,14 @@ describe('Meal Plan Queue', () => {
 
 		await event.schedule('2026-08-03');
 		expect(event._encode().date).to.equal('2026-08-03');
+		expect(event._encode().eventType).to.equal(0);
+		expect(event._createOperation('set-event-details').eventType).to.equal(0);
 		expect(event.isQueued).to.equal(false);
 
 		await event.moveToQueue();
 		expect(event.date).to.equal(null);
+		expect(event.eventType).to.equal(1);
+		expect(event._createOperation('set-event-details').eventType).to.equal(1);
 		expect(event.isQueued).to.equal(true);
 		expect(handlers).to.deep.equal(['set-event-details', 'set-event-details']);
 	});

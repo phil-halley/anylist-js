@@ -129,7 +129,7 @@ await queuedEvent.schedule('2026-08-01');
 ```
 
 Queue writes use the same reverse-engineered calendar operation as dated events,
-with the date omitted from the protobuf payload.
+with the date omitted and `eventType` set to `1` on both the event and operation.
 
 
 ### Persistent Credentials Storage

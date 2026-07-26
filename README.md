@@ -116,6 +116,21 @@ favorites.name = 'House Favorites';
 await favorites.save();
 ```
 
+Meal Plan Queue entries are undated meal planning events. They can be read,
+created, and later scheduled on the calendar:
+
+```javascript
+const queue = await any.getMealPlanQueue();
+
+const recipe = any.recipes.find(recipe => recipe.name === 'Congee recipe');
+const queuedEvent = await any.addRecipeToMealPlanQueue(recipe);
+
+await queuedEvent.schedule('2026-08-01');
+```
+
+Queue writes use the same reverse-engineered calendar operation as dated events,
+with the date omitted from the protobuf payload.
+
 
 ### Persistent Credentials Storage
 By default, the client ID and authentications tokens are encrypted with AES-256 encryption using your account password and then stored to disk. The default storage location is the `.anylist_credentials` file in the user home directory. If you wish to change the storage location, set the `credentialsFile` parameter of the `AnyList` constructor to the desired path. If you wish to disable persistent credentials storage, set the `credentialsFile` parameter to `null`.

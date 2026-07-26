@@ -131,6 +131,19 @@ await queuedEvent.schedule('2026-08-01');
 Queue writes use the same reverse-engineered calendar operation as dated events,
 with the date omitted and `eventType` set to `1` on both the event and operation.
 
+Recipe photos use two operations: upload the local image, then save its generated
+photo ID on the recipe:
+
+```javascript
+const recipe = any.recipes.find(recipe => recipe.name === 'Congee recipe');
+const {photo} = await any.addPhotoToRecipe(recipe, '/absolute/path/congee.jpg');
+
+console.log(photo.photoId);
+```
+
+The upload happens before the recipe save, matching the AnyList web client. If the
+save fails, the uploaded photo may remain unattached; do not retry blindly.
+
 
 ### Persistent Credentials Storage
 By default, the client ID and authentications tokens are encrypted with AES-256 encryption using your account password and then stored to disk. The default storage location is the `.anylist_credentials` file in the user home directory. If you wish to change the storage location, set the `credentialsFile` parameter of the `AnyList` constructor to the desired path. If you wish to disable persistent credentials storage, set the `credentialsFile` parameter to `null`.

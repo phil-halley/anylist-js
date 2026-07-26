@@ -17,6 +17,7 @@
   "author": "Max Isom <hi@maxisom.me> (https://maxisom.me/)",
   "scripts": {
     "test": "mocha 'test/**/*.test.js'",
+    "test:unit": "mocha 'test/unit/**/*.test.js'",
     "lint": "xo",
     "lint-fix": "xo --fix",
     "document": "documentation build lib/index.js -f html -o docs"
